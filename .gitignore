@@ -3,3 +3,7 @@
 Logs
 *.csproj
 *.sln
+.vs
+.idea
+obj
+Temp
