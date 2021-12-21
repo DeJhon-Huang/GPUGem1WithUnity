@@ -91,9 +91,9 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Amplitude: 0.034
-    - _Amplitude1: 0.077
-    - _Amplitude2: 0.043
-    - _Amplitude3: 0.069
+    - _Amplitude1: 0.04
+    - _Amplitude2: 0.05
+    - _Amplitude3: 0.034
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -107,33 +107,33 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0.1
+    - _Metallic: 0.287
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.909
+    - _Smoothness: 0.302
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 0.193
     - _Speed1: 0.142
-    - _Speed2: 0.204
-    - _Speed3: 0.189
+    - _Speed2: 0.15
+    - _Speed3: 0.078
     - _SrcBlend: 1
     - _Surface: 0
     - _WaveLength: 0.507
-    - _WaveLength1: 0.15
-    - _WaveLength2: 0.628
-    - _WaveLength3: 0.211
+    - _WaveLength1: 0.098
+    - _WaveLength2: 0.21
+    - _WaveLength3: 0.128
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.5714717, g: 0.8737315, b: 0.9056604, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Direction: {r: 1, g: 1, b: 0, a: 0}
-    - _Direction1: {r: 1, g: -1.68, b: 0, a: 0}
-    - _Direction2: {r: 0, g: 1, b: 0, a: 0}
-    - _Direction3: {r: 1, g: 1, b: 0, a: 0}
+    - _Direction1: {r: 0.9, g: -0.53, b: 0, a: 0}
+    - _Direction2: {r: 0.26, g: 0.03, b: 0, a: 0}
+    - _Direction3: {r: 0.59, g: -0.27, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []

@@ -28,10 +28,11 @@ struct Varyings
 
 float Wave(float3 positionOS, float amplitude, float speed, float waveLength, float2 direction)
 {
+	direction = normalize(direction);
     float t = _Time.y;
     float w = 2 / waveLength;
     float phase = speed * w;
-    float H = amplitude * sin(direction * (positionOS.xz * direction) * w + t * phase);
+    float H = amplitude * sin(dot(positionOS.xz, direction) * w + t * phase);
     return H;
 }
 
@@ -40,7 +41,7 @@ float DerivativesHeightX(float3 positionOS, float amplitude, float speed, float 
     float t = _Time.y;
     float w = 2 / waveLength;
     float phase = speed * w;
-    return w * direction.x * amplitude * cos(direction * positionOS.xz * w + t * phase);
+    return w * direction.x * amplitude * cos(dot(direction, positionOS.xz) * w + t * phase);
 }
 
 float DerivativesHeightY(float3 positionOS, float amplitude, float speed, float waveLength, float2 direction)
@@ -48,10 +49,8 @@ float DerivativesHeightY(float3 positionOS, float amplitude, float speed, float 
     float t = _Time.y;
     float w = 2 / waveLength;
     float phase = speed * w;
-    return w * direction.y * amplitude * cos(direction * positionOS.xz * w + t * phase);
+    return w * direction.y * amplitude * cos(dot(direction, positionOS.xz) * w + t * phase);
 }
-
-
 
 inline void InitializeInputDotData(InputWaterData inputData, Light mainLight, out InputDotData inputDotData)
 {
@@ -66,19 +65,10 @@ inline void InitializeInputDotData(InputWaterData inputData, Light mainLight, ou
     #if defined(_RECEIVE_SHADOWS_OFF)
         inputDotData.atten = 1;
     #else
-        
         inputDotData.atten = mainLight.shadowAttenuation * mainLight.distanceAttenuation;
     #endif
-
-    #if _PCSS_SHADOW
-        inputDotData.atten = SAMPLE_TEXTURE2D(_PCSSShadowmapTexture, sampler_PCSSShadowmapTexture, inputData.screenUV.xy).x;
-        half4 shadowParams = GetMainLightShadowParams();
-        inputDotData.atten = lerp(1, inputDotData.atten, shadowParams.x);
-        half fade = GetShadowFade(inputData.positionWS.xyz);
-        inputDotData.atten = lerp(inputDotData.atten, 1, fade);
-    #else
-        inputDotData.atten = mainLight.shadowAttenuation * mainLight.distanceAttenuation;
-    #endif
+   
+    inputDotData.atten = mainLight.shadowAttenuation * mainLight.distanceAttenuation;
 }
 
 void InitializeInputData(Varyings input, half3 normalTS, out InputWaterData inputData)
@@ -179,9 +169,13 @@ Varyings Vertex (Attributes input)
     output.positionWS.xyz = vertexInput.positionWS;
     output.positionWS.z = ComputeFogFactor(output.positionCS.z);
 
-    output.normalWS = TransformObjectToWorldNormal(normalOS);
+    output.normalWS = TransformObjectToWorldDir(normalOS);
     output.tangentWS = TransformObjectToWorldDir(tangentOS);
     output.binormalWS = TransformObjectToWorldDir(binormalOS);
+ //    output.normalWS = normalOS;
+	// output.tangentWS = tangentOS;
+	// output.binormalWS = binormalOS;
+	
 
     #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
       output.shadowCoord = GetShadowCoord(vertexInput);
@@ -209,6 +203,7 @@ half4 Fragment (Varyings input) : SV_Target
     half3 specular = GetMainSpecularColor(surfData, inputDotData, brdfBaseData);
 
 	half3 finalColor = specular * mainLight.color + surfData.albedo;
+	return half4(specular, 1);
     return half4(finalColor, surfData.alpha);
 }
 
