@@ -19,7 +19,7 @@ struct Varyings
     float3 tangentWS : TEXCOORD3;
     float3 binormalWS : TEXCOORD4;
     #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-      float4 shadowCoord : TEXCOORD5; // 计算阴影坐标
+      float4 shadowCoord : TEXCOORD6; // 计算阴影坐标
    #endif
     
     UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -74,17 +74,9 @@ inline void InitializeInputDotData(InputWaterData inputData, Light mainLight, ou
 void InitializeInputData(Varyings input, half3 normalTS, out InputWaterData inputData)
 {
 	inputData = (InputWaterData)0;
-	inputData.positionWS = input.positionWS;
-
-	#if defined(_NORMALMAP)
-		//half sgn = input.tangentWS.w;      // should be either +1 or -1
-		inputData.normalWS = TransformTangentToWorld(normalTS, half3x3(input.tangentWS.xyz, input.bitangentWS.xyz, input.normalWS.xyz));
-	#else
-		inputData.normalWS = input.normalWS;
-	#endif
-
-	inputData.normalWS = normalize(inputData.normalWS);
-
+	
+	inputData.normalWS = normalize(input.normalWS);
+	
 	#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
 		inputData.shadowCoord = input.shadowCoord;
 	#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
@@ -121,18 +113,16 @@ half DirectBRDFSpecular2(BRDFBaseData brdfData, half3 LoH, half3 NoH)
 // 如果是_STYLIZED， specularMap 当作高光大小
 // 如果是_PHONG， 光滑度来自光滑度通道
 // 如果是_GGX, 光滑度来自光滑度通道，并且乘上specularColor！
-half3 CalculateSpecular(WaterSimulationSurfaceData surfData, InputDotData inputDotData, BRDFBaseData brdfData)
+half3 CalculateSpecular(InputDotData inputDotData, BRDFBaseData brdfData)
 {
-	half ndoth = inputDotData.NdotH;
-	half3 spec = DirectBRDFSpecular2(brdfData, inputDotData.LdotH, inputDotData.NdotH) * brdfData.specColor;
-
-	spec = max(0.001f, spec);
+	half3 spec = DirectBRDFSpecular2(brdfData, inputDotData.LdotH, inputDotData.NdotH) * inputDotData.HalfLambert;
+	spec = max(0.001f, spec) * brdfData.specColor;
 	return spec;
 }
 
-inline half3 GetMainSpecularColor(WaterSimulationSurfaceData surfData, InputDotData inputDotData, BRDFBaseData brdfData)
+inline half3 GetMainSpecularColor(InputDotData inputDotData, BRDFBaseData brdfData)
 {
-	half3 specular = CalculateSpecular(surfData, inputDotData, brdfData) * surfData.albedo;
+	half3 specular = CalculateSpecular(inputDotData, brdfData);
 	return specular;
 }
 
@@ -154,28 +144,24 @@ Varyings Vertex (Attributes input)
     float b2 = DerivativesHeightX(vertex, _Amplitude2, _Speed2, _WaveLength2, _Direction2.xy);
     float b3 = DerivativesHeightX(vertex, _Amplitude3, _Speed3, _WaveLength3, _Direction3.xy);
     float b = b1 + b2 + b3;
-    float3 binormalOS = float3(1, 0, b);
+    float3 binormal = float3(0, b, 1);
 
     float t1 = DerivativesHeightY(vertex, _Amplitude1, _Speed1, _WaveLength1, _Direction1.xy);
     float t2 = DerivativesHeightY(vertex, _Amplitude2, _Speed2, _WaveLength2, _Direction2.xy);
     float t3 = DerivativesHeightY(vertex, _Amplitude3, _Speed3, _WaveLength3, _Direction3.xy);
     float t = t1 + t2 + t3;
-    float3 tangentOS = float3(0, 1, t);
+    float3 tangent = float3(1, t, 0);
 
-    float3 normalOS = float3(-b, -t, 1);
+    float3 normal = normalize(cross(binormal, tangent));
     
     VertexPositionInputs vertexInput = GetVertexPositionInputs(vertex);
     output.positionCS = vertexInput.positionCS;
     output.positionWS.xyz = vertexInput.positionWS;
     output.positionWS.z = ComputeFogFactor(output.positionCS.z);
 
-    output.normalWS = TransformObjectToWorldDir(normalOS);
-    output.tangentWS = TransformObjectToWorldDir(tangentOS);
-    output.binormalWS = TransformObjectToWorldDir(binormalOS);
- //    output.normalWS = normalOS;
-	// output.tangentWS = tangentOS;
-	// output.binormalWS = binormalOS;
-	
+     output.normalWS = 	normal;
+	 output.tangentWS = tangent;
+	 output.binormalWS = binormal;
 
     #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
       output.shadowCoord = GetShadowCoord(vertexInput);
@@ -200,10 +186,9 @@ half4 Fragment (Varyings input) : SV_Target
 	InputDotData inputDotData;
 	InitializeInputDotData(inputData, mainLight, inputDotData);
 	
-    half3 specular = GetMainSpecularColor(surfData, inputDotData, brdfBaseData);
+    half3 specular = GetMainSpecularColor(inputDotData, brdfBaseData);
 
 	half3 finalColor = specular * mainLight.color + surfData.albedo;
-	return half4(specular, 1);
     return half4(finalColor, surfData.alpha);
 }
 
