@@ -18,10 +18,8 @@ TEXTURECUBE(_EvnCubemap);  SAMPLER(sampler_EvnCubemap);
 TEXTURECUBE(_CharacterCustomEnv);  SAMPLER(sampler_CharacterCustomEnv); // 角色专用
 #endif
 
-
 //低配高光采样贴图
 TEXTURE2D(unity_NHxRoughness); SAMPLER(samplerunity_NHxRoughness);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                         BRDF Functions                                    //
