@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_water
-  m_Shader: {fileID: 4800000, guid: 28ce6b74280d9b24c9dc178185fcb1a1, type: 3}
+  m_Name: mat_water_02
+  m_Shader: {fileID: 4800000, guid: 7d26eb3ba09834a48ac93b011b3e8fff, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -92,8 +92,8 @@ Material:
     - _AlphaClip: 0
     - _Amplitude: 0.034
     - _Amplitude1: 0.037
-    - _Amplitude2: 0.102
-    - _Amplitude3: 0.091
+    - _Amplitude2: 0.05
+    - _Amplitude3: 0.06
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -107,12 +107,12 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Metallic: 0.502
+    - _Metallic: 0.35
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.58
+    - _Smoothness: 0.758
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 0.193
@@ -122,7 +122,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _WaveLength: 0.507
-    - _WaveLength1: 0.32
+    - _WaveLength1: 0.35
     - _WaveLength2: 0.21
     - _WaveLength3: 0.874
     - _WorkflowMode: 1
@@ -131,7 +131,7 @@ Material:
     - _BaseColor: {r: 0.4000089, g: 0.8269416, b: 0.9528302, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Direction: {r: 1, g: 1, b: 0, a: 0}
-    - _Direction1: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _Direction1: {r: 0.2, g: 0.5, b: 0, a: 0}
     - _Direction2: {r: 0.7, g: -0.66, b: 0, a: 0}
     - _Direction3: {r: 1.17, g: -1.94, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

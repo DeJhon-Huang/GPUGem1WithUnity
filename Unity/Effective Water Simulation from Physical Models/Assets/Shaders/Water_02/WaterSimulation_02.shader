@@ -1,4 +1,4 @@
-Shader "Rookie/GPUGem/01-WaterSimulator"
+Shader "Rookie/GPUGem/01-WaterSimulator_02"
 {
     Properties
     {
