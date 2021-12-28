@@ -26,33 +26,16 @@ struct Varyings
     UNITY_VERTEX_OUTPUT_STEREO
 };
 
-float Wave(float3 positionOS, float amplitude, float speed, float waveLength, float2 center)
+void Wave(inout float3 positionOS, float amplitude, float speed, float waveLength, float2 direction, float numWaves)
 {
-	half2 direction = (center - positionOS.xz) / (length(center - positionOS.xz) + 0.001);
-	//direction = normalize(direction);
+	direction = normalize(direction);
 	float t = _Time.y;
-	float w = 2 / waveLength;
+	float w = sqrt(9.8 * 2 * PI / waveLength);
 	float phase = speed * w;
-	float H = amplitude * sin(dot(positionOS.xz, direction) * w + t * phase);
-	return H;
-}
-
-float DerivativesHeightX(float3 positionOS, float amplitude, float speed, float waveLength, float2 center)
-{
-	half2 direction = (center - positionOS.xz) / (length(center - positionOS.xz) + 0.001);
-	float w = 2 / waveLength;
-    float t = _Time.y;
-    float phase = speed * w;
-    return w * direction.x * amplitude * cos(dot(direction, positionOS.xz) * w + t * phase);
-}
-
-float DerivativesHeightY(float3 positionOS, float amplitude, float speed, float waveLength, float2 center)
-{
-	half2 direction = (center - positionOS.xz) / (length(center - positionOS.xz) + 0.001);
-    float t = _Time.y;
-    float w = 2 / waveLength;
-    float phase = speed * w;
-    return w * direction.y * amplitude * cos(dot(direction, positionOS.xz) * w + t * phase);
+	float Q = _Q/(w * amplitude * numWaves);
+	
+	positionOS.y += amplitude * sin(w * dot(direction, positionOS.xz) + phase * t);
+	positionOS.xz += Q * amplitude * direction * cos(w * dot(direction, positionOS.xz) + phase * t);
 }
 
 inline void InitializeInputDotData(InputWaterData inputData, Light mainLight, out InputDotData inputDotData)
@@ -140,33 +123,16 @@ Varyings Vertex (Attributes input)
 	//float3 center = unity_ObjectToWorld._14_24_34;
 
     float3 vertex = input.vertex.xyz;
-    float h1 = Wave(vertex, _Amplitude1, _Speed1, _WaveLength1, 0);
-    float h2 = Wave(vertex, _Amplitude2, _Speed2, _WaveLength2, 0);
-    float h3 = Wave(vertex, _Amplitude3, _Speed3, _WaveLength3, 0);
-    vertex.y += (h1 + h2 + h3);
+    Wave(vertex, _Amplitude1, _Speed1, _WaveLength1, _Direction1.xy, 1);
+    Wave(vertex, _Amplitude2, _Speed2, _WaveLength2, _Direction2.xy, 2);
+    Wave(vertex, _Amplitude3, _Speed3, _WaveLength3, _Direction3.xy, 3);
 
-    float b1 = DerivativesHeightX(vertex, _Amplitude1, _Speed1, _WaveLength1, 0);
-    float b2 = DerivativesHeightX(vertex, _Amplitude2, _Speed2, _WaveLength2, 0);
-    float b3 = DerivativesHeightX(vertex, _Amplitude3, _Speed3, _WaveLength3, 0);
-    float b = b1 + b2 + b3;
-    float3 binormal = float3(0, b, 1);
-
-    float t1 = DerivativesHeightY(vertex, _Amplitude1, _Speed1, _WaveLength1, 0);
-    float t2 = DerivativesHeightY(vertex, _Amplitude2, _Speed2, _WaveLength2, 0);
-    float t3 = DerivativesHeightY(vertex, _Amplitude3, _Speed3, _WaveLength3, 0);
-    float t = t1 + t2 + t3;
-    float3 tangent = float3(1, t, 0);
-
-    float3 normal = normalize(cross(binormal, tangent));
-    
     VertexPositionInputs vertexInput = GetVertexPositionInputs(vertex);
     output.positionCS = vertexInput.positionCS;
     output.positionWS.xyz = vertexInput.positionWS;
     output.positionWS.z = ComputeFogFactor(output.positionCS.z);
 
-     output.normalWS = 	normal;
-	 output.tangentWS = tangent;
-	 output.binormalWS = binormal;
+     output.normalWS = 	float3(0,1,0);
 
     #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
       output.shadowCoord = GetShadowCoord(vertexInput);
@@ -191,9 +157,7 @@ half4 Fragment (Varyings input) : SV_Target
 	InputDotData inputDotData;
 	InitializeInputDotData(inputData, mainLight, inputDotData);
 	
-    half3 specular = GetMainSpecularColor(inputDotData, brdfBaseData);
-
-	half3 finalColor = specular * mainLight.color + surfData.albedo;
+	half3 finalColor = mainLight.color * surfData.albedo;
     return half4(finalColor, surfData.alpha);
 }
 

@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_water_03
-  m_Shader: {fileID: 4800000, guid: 89be7d2ba60edd14695ce004e720aade, type: 3}
+  m_Name: mat_water_gerstner
+  m_Shader: {fileID: 4800000, guid: 8ca86df732683d34fb1c9259ec1e5177, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -92,8 +92,8 @@ Material:
     - _AlphaClip: 0
     - _Amplitude: 0.034
     - _Amplitude1: 0.02
-    - _Amplitude2: 0.02
-    - _Amplitude3: 0
+    - _Amplitude2: 0.002
+    - _Amplitude3: 0.046
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -110,6 +110,7 @@ Material:
     - _Metallic: 0.034
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _Q: 1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.904
@@ -133,7 +134,7 @@ Material:
     - _Direction: {r: 1, g: 1, b: 0, a: 0}
     - _Direction1: {r: 0.2, g: 0.5, b: 0, a: 0}
     - _Direction2: {r: 0.7, g: -0.66, b: 0, a: 0}
-    - _Direction3: {r: 1.17, g: -1.94, b: 0, a: 0}
+    - _Direction3: {r: 1, g: 1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
